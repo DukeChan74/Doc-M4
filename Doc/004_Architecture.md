@@ -26,3 +26,14 @@ Tóm gọn lại nó là như này:
 
 - **Chế độ Thread (Thread mode)**: Đây là chế độ khi bộ xử lý đang thực thi mã ứng dụng thông thường. Trong chế độ này, bộ xử lý có thể hoạt động ở mức truy cập đặc quyền (privileged) hoặc không đặc quyền (unprivileged). Việc này được điều khiển bởi một thanh ghi đặc biệt có tên là CONTROL. Nội dung này sẽ được trình bày chi tiết hơn trong mục 4.2.3.
 
+Phần mềm có thể chuyển bộ xử lý từ **Thread mode** có đặc quyền **(privileged Thread mode)** sang Thread mode không đặc quyền **(unprivileged Thread mode)**. Tuy nhiên, nó không thể tự chuyển ngược lại từ unprivileged về privileged. Nếu cần thực hiện việc này, bộ xử lý phải sử dụng cơ chế ngoại lệ (exception mechanism) để xử lý quá trình chuyển đổi.
+
+Lý do chỉ có một chiều đó là: chỉ khi tác động vào thanh ghi CONTROL mới có thể chuyển mode, mà thanh ghi CONTROL chỉ được phép ghi khi ở **privileged**. Do đó ngoại lệ **SVC** sinh ra như một ngắt vượt quyền. Cụ thể nó sẽ thực hiện như sau: 
+- Ứng dụng đang chạy ở unprivileged Thread mode không thể tự ghi vào thanh ghi CONTROL để quay lại privileged.
+
+- Thay vào đó, ứng dụng sẽ thực thi lệnh SVC.
+
+- Lệnh này kích hoạt ngoại lệ SVC, làm bộ xử lý chuyển sang Handler mode.
+
+- Mà Handler mode luôn chạy ở privileged level, nên bên trong hàm phục vụ SVC, hệ điều hành hoặc phần mềm đặc quyền có thể thực hiện việc nâng quyền hoặc xử lý yêu cầu cần thiết (Ví dụ sửa CONTROL để quay lại privilege).
+
