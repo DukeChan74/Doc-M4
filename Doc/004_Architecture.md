@@ -1,67 +1,105 @@
-# Chapter 4: Kiến trúc ARM CORTEX M4
+# Chapter 4: Kiến trúc ARM Cortex-M4
 
-Chương này tập trung vào kiến thức nền, bắt buộc phải đọc chương này để nắm được cơ bản để hiểu những chương sau này.
+Chương này tập trung vào các kiến thức nền tảng của vi điều khiển ARM Cortex-M4. Đây là những nội dung cơ bản nhưng rất quan trọng, cần nắm vững trước khi tiếp cận các chương sau.
 
-Bộ xử lý Cortex-M3 và Cortex-M4 được xây dựng dựa trên kiến trúc ARMv7-M. Cả các đặc điểm của ARMv7-M và ARMv7E-M đều được tài liệu hóa trong cùng một tài liệu đặc tả kiến trúc: ARMv7-M Architecture Reference Manual.
+Bộ xử lý Cortex-M3 và Cortex-M4 được xây dựng dựa trên kiến trúc **ARMv7-M**. Trong đó, các đặc điểm của **ARMv7-M** và phần mở rộng **ARMv7E-M** đều được mô tả trong cùng một tài liệu kiến trúc là **ARMv7-M Architecture Reference Manual**.
 
-Trong chương này tôi sẽ viết những điều cơ bản nhất và cần biết nhất khi học về core. 
+Phạm vi của chương này không đi sâu vào toàn bộ tài liệu kiến trúc, mà chỉ tập trung vào những khái niệm cốt lõi cần thiết để hiểu cách hoạt động của core Cortex-M4 từ góc nhìn của người phát triển phần mềm.
 
 ## Programmer’s model
 
 ### 4.2.1 Operation modes and states
 
-Arm cortex M4 chia chia trạng thái hoạt động thành 2 Operation states và Operation modes. Các trạng thái được mô tả dưới hình sau:
+Trên ARM Cortex-M4, cần phân biệt rõ ba khái niệm:
+
+- **Operation states**: trạng thái hoạt động của bộ xử lý
+- **Operation modes**: chế độ thực thi của bộ xử lý
+- **Access levels**: mức đặc quyền khi thực thi mã lệnh
+
+Các trạng thái và chế độ này được mô tả trong hình sau:
 
 ![ARM-STATE](https://github.com/DukeChan74/Doc-M4/blob/main/picture/004/coreMode.png?raw=true)
 
-Tóm gọn lại nó là như này:
+Có thể tóm tắt như sau.
 
-**Operation states**
-- **Debug state**: Khi bộ xử lý bị dừng lại (ví dụ do trình gỡ lỗi can thiệp hoặc sau khi gặp một điểm dừng breakpoint), nó sẽ chuyển vào trạng thái gỡ lỗi và ngừng thực thi lệnh.
-- **Thumb state**: Khi bộ xử lý đang chạy mã chương trình (các lệnh Thumb), nó ở trong trạng thái Thumb. Khác với các bộ xử lý ARM cổ điển như ARM7TDMI, ở đây không có trạng thái ARM, vì các bộ xử lý Cortex-M không hỗ trợ tập lệnh ARM.
+#### Operation states
 
-**Operation modes**
+- **Debug state**: Khi bộ xử lý bị dừng bởi debugger, hoặc khi gặp breakpoint, nó đi vào trạng thái debug và tạm dừng thực thi lệnh.
+- **Thumb state**: Khi bộ xử lý đang thực thi mã chương trình, nó hoạt động ở trạng thái Thumb. Khác với các bộ xử lý ARM cổ điển như ARM7TDMI, Cortex-M không hỗ trợ tập lệnh ARM nên không tồn tại ARM state.
 
-- **Chế độ Handler (Handler mode)**: Đây là chế độ khi bộ xử lý đang thực thi một trình xử lý ngoại lệ, chẳng hạn như trình phục vụ ngắt (Interrupt Service Routine - ISR). Khi ở chế độ Handler, bộ xử lý luôn có mức truy cập đặc quyền (privileged access level).
+#### Operation modes
 
-- **Chế độ Thread (Thread mode)**: Đây là chế độ khi bộ xử lý đang thực thi mã ứng dụng thông thường. Trong chế độ này, bộ xử lý có thể hoạt động ở mức truy cập đặc quyền (privileged) hoặc không đặc quyền (unprivileged). Việc này được điều khiển bởi một thanh ghi đặc biệt có tên là CONTROL. Nội dung này sẽ được trình bày chi tiết hơn trong mục 4.2.3.
+- **Handler mode**: Đây là chế độ khi bộ xử lý đang xử lý ngoại lệ, ví dụ như ngắt hoặc fault exception. Mọi mã lệnh chạy trong Handler mode đều ở mức **privileged**.
+- **Thread mode**: Đây là chế độ khi bộ xử lý thực thi mã ứng dụng thông thường. Trong Thread mode, bộ xử lý có thể chạy ở mức **privileged** hoặc **unprivileged**.
 
-Phần mềm có thể chuyển bộ xử lý từ **Thread mode** có đặc quyền **(privileged Thread mode)** sang Thread mode không đặc quyền **(unprivileged Thread mode)**. Tuy nhiên, nó không thể tự chuyển ngược lại từ unprivileged về privileged. Nếu cần thực hiện việc này, bộ xử lý phải sử dụng cơ chế ngoại lệ (exception mechanism) để xử lý quá trình chuyển đổi.
+#### Access levels
 
-Lý do chỉ có một chiều đó là: chỉ khi tác động vào thanh ghi CONTROL mới có thể chuyển mode, mà thanh ghi CONTROL chỉ được phép ghi khi ở **privileged**. Do đó ngoại lệ **SVC** sinh ra như một ngắt vượt quyền. Cụ thể nó sẽ thực hiện như sau: 
-- Ứng dụng đang chạy ở unprivileged Thread mode không thể tự ghi vào thanh ghi CONTROL để quay lại privileged.
+- **Privileged**: Có quyền truy cập đầy đủ tới các tài nguyên của hệ thống, bao gồm các thanh ghi điều khiển hệ thống và các thao tác đặc biệt.
+- **Unprivileged**: Bị giới hạn quyền truy cập. Một số vùng nhớ, thanh ghi hệ thống và thao tác đặc biệt sẽ không thể sử dụng trực tiếp.
 
-- Thay vào đó, ứng dụng sẽ thực thi lệnh SVC.
+Điểm quan trọng cần lưu ý là **Thread mode** và **Handler mode** là **chế độ thực thi**, còn **privileged** và **unprivileged** là **mức đặc quyền truy cập**. Đây là hai khái niệm khác nhau và không nên nhầm lẫn.
 
-- Lệnh này kích hoạt ngoại lệ SVC, làm bộ xử lý chuyển sang Handler mode.
+### Chuyển từ privileged sang unprivileged
 
-- Mà Handler mode luôn chạy ở privileged level, nên bên trong hàm phục vụ SVC, hệ điều hành hoặc phần mềm đặc quyền có thể thực hiện việc nâng quyền hoặc xử lý yêu cầu cần thiết (Ví dụ sửa CONTROL để quay lại privilege).
+Trong Thread mode, phần mềm có thể chủ động hạ quyền từ **privileged** xuống **unprivileged** bằng cách thiết lập bit `nPRIV` trong thanh ghi **CONTROL**.
 
-![AcessLevel](https://github.com/DukeChan74/Doc-M4/blob/main/picture/004/AccessLevel.png?raw=true)
+Việc này thường được sử dụng khi hệ thống muốn tách mã ứng dụng thông thường ra khỏi phần mềm lõi của hệ thống, chẳng hạn như kernel của RTOS.
+
+### Vì sao không thể tự chuyển ngược lại?
+
+Một đoạn mã đang chạy ở **unprivileged Thread mode** không thể tự nâng quyền trở lại **privileged Thread mode**. Nguyên nhân là vì thao tác thay đổi bit `nPRIV` trong thanh ghi **CONTROL** chỉ được phép thực hiện khi bộ xử lý đang ở mức đặc quyền.
+
+Nói cách khác, khi đã ở unprivileged, phần mềm không còn quyền tự sửa `CONTROL` để nâng quyền cho chính nó.
+
+Đây là cơ chế quan trọng nhằm ngăn không cho mã ứng dụng tự ý chiếm quyền điều khiển toàn bộ hệ thống.
+
+### Vai trò của SVC trong việc nâng quyền
+
+Để quay từ **unprivileged Thread mode** về **privileged Thread mode**, bộ xử lý phải sử dụng cơ chế ngoại lệ. Cách phổ biến nhất là sử dụng ngoại lệ **SVC (Supervisor Call)**.
+
+Quá trình này diễn ra theo trình tự sau:
+
+1. Ứng dụng đang chạy ở **unprivileged Thread mode** không thể tự ghi vào thanh ghi **CONTROL**.
+2. Ứng dụng thực thi lệnh **SVC** để yêu cầu một dịch vụ hệ thống.
+3. Lệnh này kích hoạt ngoại lệ **SVC**, khiến bộ xử lý chuyển sang **Handler mode**.
+4. Vì **Handler mode** luôn chạy ở mức **privileged**, hàm phục vụ `SVC_Handler()` có thể thực hiện các thao tác nhạy cảm, ví dụ như thay đổi lại thanh ghi **CONTROL**.
+5. Khi thoát khỏi exception handler, bộ xử lý quay lại **Thread mode** với mức đặc quyền đã được cập nhật.
+
+Hình dưới đây minh họa mối quan hệ giữa các mức đặc quyền:
+
+![AccessLevel](https://github.com/DukeChan74/Doc-M4/blob/main/picture/004/AccessLevel.png?raw=true)
 
 Code demo: [003_operation_modes](https://github.com/DukeChan74/Doc-M4/tree/main/Code/003_operation_modes)
 
-Đoạn code mô tả trên minh chứng cho việc NPAL (unprivileged không thể tự ý quay lại PAL mà không thông qua exception). Để chuyển được mode theo hướng ngược lại, dưới đây là một ví dụ:
+Đoạn code trên minh họa rằng một chương trình đang chạy ở **unprivileged Thread mode** không thể tự ý quay trở lại **privileged Thread mode** nếu không thông qua cơ chế exception. Để thực hiện việc chuyển quyền theo chiều ngược lại, có thể sử dụng cơ chế **SVC** như trong ví dụ dưới đây:
 
 ![SwitchMode](https://github.com/DukeChan74/Doc-M4/blob/main/picture/004/SVC_switchmode.png?raw=true)
-Nghe ảo ma lazada nhưng việc phân quyền này kết hợp MPU sẽ giúp tạo nền tảng cho RTOS
 
-Trong hệ điều hành nhúng, thường có mô hình:
+### Ý nghĩa của cơ chế phân quyền
 
-- Kernel chạy privileged
+Thoạt nhìn, việc phân tách **privileged** và **unprivileged** có vẻ làm hệ thống trở nên phức tạp hơn. Tuy nhiên, đây là một cơ chế rất quan trọng, đặc biệt khi kết hợp với **MPU (Memory Protection Unit)**.
 
-- Application tasks chạy unprivileged
+Việc phân quyền này mang lại một số lợi ích chính:
 
-Task muốn làm việc “nhạy cảm” như:
+- Bảo vệ vùng nhớ quan trọng của hệ thống
+- Ngăn mã ứng dụng truy cập trực tiếp vào các tài nguyên nhạy cảm
+- Hạn chế khả năng một tác vụ lỗi làm ảnh hưởng tới toàn bộ hệ thống
+- Tạo nền tảng để xây dựng mô hình kernel/user trong RTOS
 
-- Cấp phát tài nguyên hệ thống
+Trong một hệ điều hành nhúng, mô hình phổ biến là:
 
-- Đổi cấu hình timer hệ thống
+- **Kernel** chạy ở mức **privileged**
+- **Application tasks** chạy ở mức **unprivileged**
 
-- Thao tác scheduler
+Khi đó, các tác vụ ứng dụng muốn thực hiện những thao tác nhạy cảm như:
 
-- Truy cập vùng nhớ dùng chung đặc biệt
+- cấp phát tài nguyên hệ thống
+- thay đổi cấu hình timer hệ thống
+- tác động tới scheduler
+- truy cập vùng nhớ dùng chung đặc biệt
 
-Thì phải gọi system service qua SVC.
+thì không được thực hiện trực tiếp, mà phải thông qua **system service** do kernel cung cấp, thường được gọi qua cơ chế **SVC**.
 
-Nhờ đó RTOS quản lý tài nguyên tập trung và an toàn hơn. Hiểu sơ qua là như vậy, phần này sẽ được trình bày chi tiết trong các bài viết của RTOS và Chapter 8 của tài liệu này.
+Nhờ đó, RTOS có thể quản lý tài nguyên theo cách tập trung, có kiểm soát và an toàn hơn. Đây cũng là nền tảng quan trọng để nâng cao độ ổn định và độ tin cậy của hệ thống nhúng.
+
+Nội dung này sẽ còn được đề cập chi tiết hơn trong các phần liên quan tới RTOS và các chương sau.
