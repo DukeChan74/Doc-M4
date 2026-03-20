@@ -12,7 +12,7 @@ Trong chương này tôi sẽ viết những điều cơ bản nhất và cần 
 
 Arm cortex M4 chia chia trạng thái hoạt động thành 2 Operation states và Operation modes. Các trạng thái được mô tả dưới hình sau:
 
-![ARM-STATE](https://github.com/DukeChan74/Doc-M4/blob/main/picture/004/coreMode.png)
+![ARM-STATE](https://github.com/DukeChan74/Doc-M4/blob/main/picture/004/coreMode.png?raw=true)
 
 Tóm gọn lại nó là như này:
 
@@ -41,5 +41,27 @@ Lý do chỉ có một chiều đó là: chỉ khi tác động vào thanh ghi C
 
 Code demo: [003_operation_modes](https://github.com/DukeChan74/Doc-M4/tree/main/Code/003_operation_modes)
 
-Đoạn code mô tả trên minh chứng cho việc NPAL (unprivileged không thể tự ý quay lại PAL mà không thông qua exception).
+Đoạn code mô tả trên minh chứng cho việc NPAL (unprivileged không thể tự ý quay lại PAL mà không thông qua exception). Để chuyển được mode theo hướng ngược lại, dưới đây là một ví dụ:
 
+![SwitchMode](https://github.com/DukeChan74/Doc-M4/blob/main/picture/004/SVC_switchmode.png?raw=true)
+Nghe ảo ma lazada nhưng việc phân quyền này kết hợp MPU sẽ giúp tạo nền tảng cho RTOS
+
+Trong hệ điều hành nhúng, thường có mô hình:
+
+- Kernel chạy privileged
+
+- Application tasks chạy unprivileged
+
+Task muốn làm việc “nhạy cảm” như:
+
+- Cấp phát tài nguyên hệ thống
+
+- Đổi cấu hình timer hệ thống
+
+- Thao tác scheduler
+
+- Truy cập vùng nhớ dùng chung đặc biệt
+
+Thì phải gọi system service qua SVC.
+
+Nhờ đó RTOS quản lý tài nguyên tập trung và an toàn hơn. Hiểu sơ qua là như vậy, phần này sẽ được trình bày chi tiết trong các bài viết của RTOS và Chapter 8 của tài liệu này.
