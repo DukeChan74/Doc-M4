@@ -37,3 +37,9 @@ Lý do chỉ có một chiều đó là: chỉ khi tác động vào thanh ghi C
 
 - Mà Handler mode luôn chạy ở privileged level, nên bên trong hàm phục vụ SVC, hệ điều hành hoặc phần mềm đặc quyền có thể thực hiện việc nâng quyền hoặc xử lý yêu cầu cần thiết (Ví dụ sửa CONTROL để quay lại privilege).
 
+![AcessLevel](https://github.com/DukeChan74/Doc-M4/blob/main/picture/004/AccessLevel.png?raw=true)
+
+Code demo: [003_operation_modes](https://github.com/DukeChan74/Doc-M4/tree/main/Code/003_operation_modes)
+
+Đoạn code mô tả trên minh chứng cho việc NPAL (unprivileged không thể tự ý quay lại PAL mà không thông qua exception).
+
