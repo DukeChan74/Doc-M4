@@ -1,23 +1,25 @@
 ﻿# 001 - Agenda Topic: Tổng quan về Core trong Vi Điều Khiển
 
-## 1. Giới thiệu: Tại sao cần hiểu về Core
+## 1. Tại sao cần hiểu về Core
 
-Trong quá trình phát triển hệ thống nhúng, nhiều con vợ thường tập trung vào việc sử dụng thư viện, cấu hình ngoại vi (GPIO, UART, ADC,...) mà ít quan tâm đến **core (CPU core)** – thành phần thực sự thực thi chương trình.
+Trong quá trình phát triển hệ thống nhúng, nhiều người thường tập trung vào việc sử dụng thư viện, cấu hình ngoại vi (GPIO, UART, ADC,...) mà ít quan tâm đến **core (CPU core)** – thành phần thực sự thực thi chương trình.
 
-Tuy nhiên, việc hiểu rõ về core là yếu tố then chốt giúp nâng cao năng lực kỹ thuật, đặc biệt là trong các tình huống:
+Tuy nhiên, việc hiểu rõ về core là yếu tố then chốt giúp nâng cao năng lực kỹ thuật, đặc biệt trong các tình huống sau:
+
+---
 
 ### 1.1 Hiểu cách chương trình được thực thi
 
 Core là nơi:
 
-- Đọc và thực thi từng lệnh trong chương trình
-- Quản lý thanh ghi (register)
-- Điều khiển luồng chạy (flow control)
+- Đọc và thực thi từng lệnh trong chương trình  
+- Quản lý thanh ghi (register)  
+- Điều khiển luồng chạy (flow control)  
 
-Khi hiểu cách core hoạt động, kỹ sư có thể:
+Khi hiểu cách core hoạt động, chúng ta có thể:
 
-- Biết được chương trình đang chạy ở đâu
-- Hiểu vì sao một đoạn code lại cho kết quả như vậy
+- Biết được chương trình đang chạy ở đâu  
+- Hiểu vì sao một đoạn code lại cho kết quả như vậy  
 
 ---
 
@@ -25,21 +27,21 @@ Khi hiểu cách core hoạt động, kỹ sư có thể:
 
 Trong thực tế, các lỗi hệ thống thường không đến từ những phần “dễ thấy” như cấu hình sai GPIO, mà đến từ:
 
-- Truy cập sai địa chỉ bộ nhớ
-- Stack overflow
-- HardFault / BusFault
-- Sai thứ tự thực thi lệnh
+- Truy cập sai địa chỉ bộ nhớ  
+- Stack overflow  
+- HardFault / BusFault  
+- Sai thứ tự thực thi lệnh  
 
 Nếu không hiểu core, việc debug sẽ mang tính “thử sai” (trial-and-error).
 
-Ngược lại, khi hiểu core, các con vợ có thể:
+Ngược lại, khi hiểu core, chúng ta có thể:
 
-- Đọc và phân tích **register** khi debug
-- Hiểu ý nghĩa của các lỗi exception (HardFault, UsageFault...)
-- Lần theo **stack frame** để tìm vị trí lỗi
-- Xác định chính xác nguyên nhân thay vì đoán
+- Đọc và phân tích **register** khi debug  
+- Hiểu ý nghĩa của các lỗi exception (HardFault, UsageFault...)  
+- Lần theo **stack frame** để tìm vị trí lỗi  
+- Xác định chính xác nguyên nhân thay vì đoán  
 
-> Ví dụ: Khi xảy ra HardFault, việc hiểu core giúp các con vợ đọc được PC, LR, và stack để biết chính xác dòng code gây lỗi.
+> Ví dụ: Khi xảy ra HardFault, việc hiểu core giúp đọc được PC, LR và stack để xác định chính xác dòng code gây lỗi.
 
 ---
 
@@ -47,36 +49,38 @@ Ngược lại, khi hiểu core, các con vợ có thể:
 
 Hiểu core giúp:
 
-- Viết code tối ưu hơn (giảm cycle, giảm latency)
-- Tận dụng được các tính năng như:
-  - Pipeline
-  - DSP instruction (đối với M4)
-  - FPU
+- Viết code tối ưu hơn (giảm cycle, giảm latency)  
+- Tận dụng các tính năng như:  
+  - Pipeline  
+  - DSP instruction (đối với M4)  
+  - FPU  
 
 ---
 
-### 1.4 Là nền tảng để học các kiến thức nâng cao
+### 1.4 Là nền tảng cho các kiến thức nâng cao
 
 Các chủ đề nâng cao trong embedded đều liên quan trực tiếp đến core:
 
-- Interrupt và NVIC
-- Context switching (RTOS)
-- Memory management
-- Low-level optimization
+- Interrupt và NVIC  
+- Context switching (RTOS)  
+- Memory management  
+- Low-level optimization  
 
-Nếu không có nền tảng về core, việc tiếp cận các chủ đề này sẽ rất khó khăn.
+Nếu không có nền tảng về core, việc tiếp cận các chủ đề này sẽ khó khăn hơn nhiều.
 
 ---
 
-### 1.5 Túm gọn lại
+### 1.5 Tóm lại
 
-Việc hiểu về core không chỉ giúp các con vợ "biết hệ thống chạy như thế nào", mà quan trọng hơn:
+Hiểu về core không chỉ giúp “biết hệ thống chạy như thế nào”, mà quan trọng hơn:
 
-- Giúp debug nhanh và chính xác hơn
-- Giảm thời gian xử lý lỗi
-- Nâng cao chất lượng code và hệ thống
+- Debug nhanh và chính xác hơn  
+- Giảm thời gian xử lý lỗi  
+- Nâng cao chất lượng code và hệ thống  
 
-> Nói cách khác: Hiểu core là bước chuyển từ “lập trình theo cách sử dụng” sang “lập trình có kiểm soát hệ thống”.
+> Nói cách khác: Hiểu core là bước chuyển từ “lập trình kiểu sử dụng” sang “lập trình có kiểm soát hệ thống”.
+
+---
 
 ## 2. Core là gì?
 
@@ -86,12 +90,12 @@ Việc hiểu về core không chỉ giúp các con vợ "biết hệ thống ch
 
 Core chịu trách nhiệm:
 
-- Thực thi từng lệnh (instruction) trong chương trình
-- Xử lý dữ liệu (tính toán, logic)
-- Điều khiển luồng thực thi (rẽ nhánh, vòng lặp, gọi hàm)
-- Quản lý các thanh ghi (register) và stack
+- Thực thi từng lệnh (instruction) trong chương trình  
+- Xử lý dữ liệu (tính toán, logic)  
+- Điều khiển luồng thực thi (rẽ nhánh, vòng lặp, gọi hàm)  
+- Quản lý thanh ghi (register) và stack  
 
-Nói cách khác, **mọi dòng code các con vợ viết cuối cùng đều được thực thi bởi core**.
+Nói cách khác, **mọi dòng code chúng ta viết cuối cùng đều được thực thi bởi core**.
 
 ---
 
@@ -99,14 +103,14 @@ Nói cách khác, **mọi dòng code các con vợ viết cuối cùng đều đ
 
 Trong các vi điều khiển hiện đại như STM32:
 
-- Nhà sản xuất (ST) **không tự thiết kế core**
+- Nhà sản xuất (ST) **không tự thiết kế core**  
 - Họ sử dụng core từ ARM (ví dụ: Cortex-M0, M3, M4, M7)
 
-👉 Ví dụ cụ thể:
+👉 Ví dụ:
 
-- STM32F4 sử dụng **ARM Cortex-M4 core**
-- Core này chạy với xung nhịp lên tới ~168MHz
-- Có hỗ trợ DSP và FPU giúp xử lý tín hiệu nhanh hơn :contentReference[oaicite:0]{index=0}
+- STM32F4 sử dụng **ARM Cortex-M4 core**  
+- Core chạy với xung nhịp lên tới ~168MHz  
+- Có hỗ trợ DSP và FPU giúp xử lý tín hiệu nhanh hơn  
 
 ➡️ Điều này có nghĩa:
 
@@ -118,19 +122,19 @@ Trong các vi điều khiển hiện đại như STM32:
 
 Trong một vi điều khiển (MCU), core chỉ là **một phần trong toàn bộ hệ thống**, bao gồm:
 
-- **Core (CPU)**: xử lý trung tâm
-- **Flash**: lưu chương trình
-- **RAM**: lưu dữ liệu runtime
-- **Peripheral**: GPIO, UART, ADC, Timer...
-- **Bus system**: kết nối các thành phần
+- **Core (CPU)**: xử lý trung tâm  
+- **Flash**: lưu chương trình  
+- **RAM**: lưu dữ liệu runtime  
+- **Peripheral**: GPIO, UART, ADC, Timer...  
+- **Bus system**: kết nối các thành phần  
 
 Core sẽ:
 
-- Lấy lệnh từ Flash
-- Xử lý dữ liệu trong RAM
-- Điều khiển peripheral thông qua thanh ghi (register)
+- Lấy lệnh từ Flash  
+- Xử lý dữ liệu trong RAM  
+- Điều khiển peripheral thông qua thanh ghi (register)  
 
-👉 Toàn bộ giao tiếp này diễn ra thông qua **bus nội bộ (AHB, APB,...)**
+👉 Toàn bộ quá trình này diễn ra thông qua **bus nội bộ (AHB, APB,...)**
 
 ---
 
@@ -142,9 +146,10 @@ Core sẽ:
 | Memory    | Lưu trữ chương trình và dữ liệu |
 | Peripheral| Giao tiếp với bên ngoài (GPIO, UART, ADC...) |
 
-📌 Điểm quan trọng:
+📌 **Điểm quan trọng:**
 
 - Core **không trực tiếp “chạm” vào phần cứng bên ngoài**
+
 - Mọi thứ đều thông qua:
   - Thanh ghi (register)
   - Memory-mapped I/O
@@ -155,37 +160,42 @@ Core sẽ:
 
 Có thể hình dung:
 
-- Core = **CPU của máy tính**
-- MCU = **một hệ thống hoàn chỉnh thu nhỏ trên 1 chip**
+- Core = **CPU của máy tính**  
+- MCU = **một hệ thống hoàn chỉnh thu nhỏ trên một chip**  
 
-Để anh generate tạm con ảnh trên AI để các con vợ xem cho dễ hiểu nha
+Hình minh họa:
 
 ![STM32-M4](https://admin.devstack.it.com/uploads/STM_32_M4_139aef8f00.png)
+
 ---
 
-### 2.6 Túm lại
+### 2.6 Tóm lại
 
-- Core là thành phần quan trọng nhất của vi điều khiển
-- Các dòng MCU khác nhau có thể:
-  - Giống peripheral
-  - Nhưng khác core → hiệu năng & cách lập trình khác nhau
-- Ví dụ:
-  - STM32F1 → Cortex-M3
-  - STM32F4 → Cortex-M4
-  - STM32F7 → Cortex-M7
+- Core là thành phần quan trọng nhất của vi điều khiển  
+- Các dòng MCU có thể giống peripheral nhưng khác core → hiệu năng và cách lập trình khác nhau  
 
-👉 Vì vậy, khi học embedded:
+Ví dụ:
 
-> Hiểu core chính là hiểu “cách hệ thống thực sự hoạt động bên trong”
+- STM32F1 → Cortex-M3  
+- STM32F4 → Cortex-M4  
+- STM32F7 → Cortex-M7  
+
+👉 Vì vậy:
+
+> Hiểu core chính là hiểu “cách hệ thống thực sự hoạt động bên trong”.
+
+---
 
 ## 3. Tổng quan về các dòng ARM Cortex-M
 
 ARM Cortex-M là họ core phổ biến trong vi điều khiển hiện đại, bao gồm:
 
-- Cortex-M0 / M0+
-- Cortex-M3
-- Cortex-M4
-- Cortex-M7
+- Cortex-M0 / M0+  
+- Cortex-M3  
+- Cortex-M4  
+- Cortex-M7  
+
+---
 
 ### 3.1 So sánh nhanh
 
@@ -204,27 +214,37 @@ ARM Cortex-M là họ core phổ biến trong vi điều khiển hiện đại, 
 
 Cortex-M4 được sử dụng rộng rãi nhờ:
 
-- Hỗ trợ **DSP instructions** (xử lý tín hiệu số)
-- Tích hợp **FPU (Floating Point Unit)**
-- Hiệu năng tốt so với chi phí
+- Hỗ trợ **DSP instructions**  
+- Tích hợp **FPU (Floating Point Unit)**  
+- Hiệu năng tốt so với chi phí  
+
+---
 
 ### 4.2 Ứng dụng thực tế
 
-- IoT (Internet of Things)
-- Điều khiển động cơ (Motor Control)
-- Xử lý âm thanh (Audio Processing)
-- Thiết bị công nghiệp
+- IoT (Internet of Things)  
+- Điều khiển động cơ (Motor Control)  
+- Xử lý âm thanh (Audio Processing)  
+- Thiết bị công nghiệp  
 
-### 4.3 Các dòng vi điều khiển phổ biến sử dụng M4
+---
 
-- STM32F4 (STMicroelectronics)
-- NXP Kinetis
-- TI Tiva C Series
+### 4.3 Các dòng vi điều khiển sử dụng M4
+
+- STM32F4 (STMicroelectronics)  
+- NXP Kinetis  
+- TI Tiva C Series  
 
 ---
 
 ## 5. Tổng kết
-List các bài viết về Arm cortex M4:
 
+Core là nền tảng của mọi hệ thống nhúng. Việc hiểu rõ core giúp:
 
----
+- Nắm được cách chương trình thực thi  
+- Debug hiệu quả hơn  
+- Tối ưu hệ thống tốt hơn  
+
+Và quan trọng nhất:
+
+> Nó giúp bạn chuyển từ “viết code để chạy” sang “viết code để kiểm soát hệ thống”.
