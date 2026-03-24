@@ -8,3 +8,5 @@ Ex: 32 bit processor has maximum 2^32 bits in memory map.
 
 The mapping of different regions in the addressable memory location range is called ‘memory map’.  
 
+![Memorymap](http://github.com/DukeChan74/Doc-M4/blob/main/picture/005/Memorymap.png?raw=true)
+
