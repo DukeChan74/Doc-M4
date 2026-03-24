@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (13.3.rel1)
+# Toolchain: GNU Tools for STM32 (14.3.rel1)
 ################################################################################
 
 -include ../makefile.init
@@ -59,8 +59,8 @@ all: main-build
 main-build: operation_modes.elf secondary-outputs
 
 # Tool invocations
-operation_modes.elf operation_modes.map: $(OBJS) $(USER_OBJS) C:\D\ARM_M4\Code\003_operation_modes\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "operation_modes.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\D\ARM_M4\Code\003_operation_modes\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="operation_modes.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+operation_modes.elf operation_modes.map: $(OBJS) $(USER_OBJS) D:\Doc-M4\Code\003_operation_modes\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "operation_modes.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\Doc-M4\Code\003_operation_modes\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="operation_modes.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
