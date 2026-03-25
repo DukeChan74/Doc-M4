@@ -119,9 +119,9 @@ Trong các ngôn ngữ lập trình bậc cao như **C** hoặc **C++**, việc 
 Trong đa số trường hợp, thao tác nhảy và gọi hàm được thực hiện bởi các lệnh chuyên dụng cho mục đích này. Việc dùng các lệnh xử lý dữ liệu để cập nhật trực tiếp **PC** là ít phổ biến hơn. Tuy nhiên, giá trị của **PC** rất hữu ích khi truy cập tới các **literal data** được lưu trong bộ nhớ chương trình. Vì vậy, có thể thường xuyên bắt gặp các lệnh đọc bộ nhớ dùng **PC** làm thanh ghi base address, kết hợp với offset được tạo ra bởi các giá trị tức thời trong lệnh.
 
 ## 4.2.3 Special registers
-Ngoài các thanh ghi nằm trong **register bank**, bộ xử lý còn có một số **thanh ghi đặc biệt (special registers)** như được minh họa trong dưới đây. Các thanh ghi này chứa **trạng thái của bộ xử lý**, đồng thời xác định **trạng thái hoạt động** và cơ chế **che ngắt/ngoại lệ**.
+PSR, như chính tên gọi của nó, chứa tất cả các cờ trạng thái CPU. 
 
-
+![xPSR](https://github.com/DukeChan74/Doc-M4/blob/main/picture/004/xPSR.png)
 
 Trong quá trình phát triển các ứng dụng đơn giản bằng ngôn ngữ bậc cao như **C**, số trường hợp cần truy cập trực tiếp tới các thanh ghi này là không nhiều. Tuy nhiên, chúng lại rất quan trọng trong việc phát triển **hệ điều hành nhúng (embedded OS)** hoặc khi cần sử dụng các cơ chế **mask ngắt nâng cao**.
 
