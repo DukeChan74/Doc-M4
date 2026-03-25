@@ -121,7 +121,7 @@ Trong đa số trường hợp, thao tác nhảy và gọi hàm được thực 
 ## 4.2.3 Special registers
 PSR, như chính tên gọi của nó, chứa tất cả các cờ trạng thái CPU. 
 
-![xPSR](https://github.com/DukeChan74/Doc-M4/blob/main/picture/004/xPSR.png)
+![xPSR](https://raw.githubusercontent.com/DukeChan74/Doc-M4/main/picture/004/xPSR.png)
 
 Trong quá trình phát triển các ứng dụng đơn giản bằng ngôn ngữ bậc cao như **C**, số trường hợp cần truy cập trực tiếp tới các thanh ghi này là không nhiều. Tuy nhiên, chúng lại rất quan trọng trong việc phát triển **hệ điều hành nhúng (embedded OS)** hoặc khi cần sử dụng các cơ chế **mask ngắt nâng cao**.
 
@@ -131,4 +131,9 @@ Các **special registers** không được **memory mapped**, vì vậy không t
 MRS <reg>, <special_reg>   ; đọc special register vào thanh ghi thường
 MSR <special_reg>, <reg>   ; ghi từ thanh ghi thường vào special register
 ```
+PSR có một số trường bí danh là các phiên bản mask của thanh ghi đầy đủ. Ba thanh ghi bí danh là Application Program Status Register, Interrupt Program Status
+Register, and the Execution Program Status Register. Mỗi thanh ghi bí danh này chứa một tập con của các cờ trong thanh ghi đầy đủ và có thể được sử dụng như một phím tắt nếu bạn cần truy cập một phần của PSR. PSR thường được gọi là xPSR để chỉ thanh ghi đầy đủ thay vì bất kỳ tập con bí danh nào (Hình 3.4)
 
+![3reg](https://raw.githubusercontent.com/DukeChan74/Doc-M4/main/picture/004/3reg.png)
+
+Thanh ghi này cũng ít khi được đọc và ứng dụng về debug nên sẽ được trình bày ít. Để hiểu rõ về các thanh ghi này hãy đọc thêm phần stack và bài viết về Function Call.
